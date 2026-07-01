@@ -89,17 +89,31 @@ interface IPluginHost
 
 ## Как добавить свой плагин
 
-1. Форкни этот репозиторий
-2. Создай папку `src/<имя_плагина>/`
-3. Напиши плагин по шаблону
-4. Открой Pull Request
+1. Форкни репозиторий на GitHub
+2. Клонируй форк:
+   ```bash
+   git clone https://github.com/ТВОЙ_НИК/CustomWinConsolePlugins.git
+   cd CustomWinConsolePlugins
+   ```
+3. Создай папку `src/<имя_плагина>/` и напиши плагин
+4. Собери плагин (нужен CustomWinConsole рядом):
+   ```bash
+   dotnet build -c Release
+   ```
+5. Закоммить и запушь:
+   ```bash
+   git add src/<имя_плагина>/
+   git commit -m "Добавлен плагин <имя>"
+   git push
+   ```
+6. Открой Pull Request на github.com/Marrcus113/CustomWinConsolePlugins
 
-## Сборка плагина
+## Установка плагина себе (локально)
 
 ```bash
-# Из корня CustomWinConsole
+# Сборка
 dotnet build -c Release
 
-# Скопируй DLL в папку плагинов
-copy src\МойПлагин\bin\Release\net10.0\МойПлагин.dll %USERPROFILE%\.customwinconsole\plugins\
+# Копирование
+copy src\ИмяПлагина\bin\Release\net10.0\ИмяПлагина.dll %USERPROFILE%\.customwinconsole\plugins\
 ```
