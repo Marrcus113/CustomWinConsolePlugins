@@ -2,9 +2,19 @@
 
 Репозиторий плагинов для [CustomWinConsole](https://github.com/Marrcus113/CustomWinConsole).
 
+## Список плагинов
+
+| Плагин | Версия | Описание |
+|--------|--------|----------|
+| [bash_WSL2](src/bash_WSL2/) | 1.0.0 | Интеграция с WSL2: bash-команды, конвертация путей, дистрибутивы |
+
+---
+
 ## Формат плагина
 
-Плагин — это .NET DLL, компилируемый под `net10.0`, реализующий интерфейс `ICwcPlugin`.
+Плагин — это .NET DLL под `net10.0`, реализующий `ICwcPlugin`.
+
+### Шаблон проекта
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
@@ -14,12 +24,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CustomWinConsole.SDK" Version="1.0.0" />
+    <ProjectReference Include="..\CustomWinConsole\CustomWinConsole.csproj" />
   </ItemGroup>
 </Project>
 ```
 
-### Пример плагина
+### Пример
 
 ```csharp
 using CustomWinConsole;
@@ -47,30 +57,49 @@ public class MyCommands : ICwcPlugin
 }
 ```
 
-### Установка плагина
+### API плагина
 
-```bash
-plugin install MyCommands
+```csharp
+interface ICwcPlugin
+{
+    string Name { get; }
+    string Version { get; }
+    string Description { get; }
+    void Register(IPluginHost host);
+}
+
+interface IPluginHost
+{
+    void RegisterCommand(string name, Action<string[]> handler);
+    void Write(string text, ConsoleColor color = ConsoleColor.Gray);
+    void WriteLine(string text = "");
+    void WriteError(string text);
+    string CurrentDirectory { get; }
+}
 ```
 
-Скачивает DLL из релизов этого репозитория или из указанного URL.
-
-### Команды управления
+## Управление плагинами
 
 | Команда | Описание |
 |---------|----------|
 | `plugin list` | Список установленных плагинов |
 | `plugin install <name>` | Установить плагин |
 | `plugin remove <name>` | Удалить плагин |
-| `plugin repo` | Показать репозиторий плагинов |
+| `plugin repo` | Показать репозиторий |
 
 ## Как добавить свой плагин
 
-1. Создай проект по шаблону выше
-2. Реализуй `ICwcPlugin`
-3. Собери `dotnet build -c Release`
-4. Открой Issue или Pull Request в этот репозиторий
+1. Форкни этот репозиторий
+2. Создай папку `src/<имя_плагина>/`
+3. Напиши плагин по шаблону
+4. Открой Pull Request
 
-## Релизы
+## Сборка плагина
 
-Плагины публикуются как GitHub Releases с asset'ами `.dll`.
+```bash
+# Из корня CustomWinConsole
+dotnet build -c Release
+
+# Скопируй DLL в папку плагинов
+copy src\МойПлагин\bin\Release\net10.0\МойПлагин.dll %USERPROFILE%\.customwinconsole\plugins\
+```
